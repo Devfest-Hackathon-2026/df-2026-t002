@@ -6,6 +6,16 @@
 
 [公開アプリ](https://app.rangleplay.stream/) · [Web UI](https://app.rangleplay.stream/demo/) · [ドキュメント](docs/README.md)
 
+## プロジェクト情報
+
+| 項目 | 内容 |
+| --- | --- |
+| イベント | DevFest Hackathon 2026 |
+| ライセンス | 自作コードは [MIT License](LICENSE)。外部素材は[出典・利用条件](apps/web/assets/samples/ATTRIBUTION.md)を参照 |
+| 使用技術 | Go、Flutter / Dart、Python、Gaussian Splatting |
+| クラウド | Google Cloud：Cloud Run、Vertex AI、Cloud Storage、Cloud CDN、Firestore |
+| 開発リポジトリ | [Hosi121/rangle](https://github.com/Hosi121/rangle) |
+
 ## 現在できること
 
 | 機能 | 内容 |
