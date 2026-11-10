@@ -1,38 +1,58 @@
-# DevFest Hackathon 2026 提出用リポジトリ
+# rangle
 
-  DevFest Hackathon 2026 のチームの **最終提出用** リポジトリです。提出期限までに、作品のコードと資料をこのリポジトリに置いてください。
+**replay + angle**。スポーツの決定的瞬間を、自分の視点で見返す。
 
-  このリポジトリは **公開（public）** です。開催中も、運営・審査員・ほかの参加者が見られます。
+実写のハイライトを縦型フィードで見つけ、時間と視点を動かすFlutter Webアプリ。校正済み多視点データをクラウドでGaussian Splattingへ再構成し、端末で復号・描画します。
 
-  ## はじめに
+[公開アプリ](https://app.rangleplay.stream/) · [Web UI](https://app.rangleplay.stream/demo/) · [ドキュメント](docs/README.md)
 
-  1. GitHub から届いた招待を受け入れてください（招待の期限は 7 日です）
-  2. このリポジトリを clone して、提出物を置いてください
+## 現在できること
 
-  招待の期限が切れたときや、メンバーが変わったときは、運営に連絡してください。
+| 機能 | 内容 |
+| --- | --- |
+| [見る](apps/web/README.md) | 縦型フィード、サムネイル付き検索結果・タグ・共有、自由視点・時間モデルの再生 |
+| [生成](docs/generation.md) | 運営・団体担当者向け3DGS/4DGS生成、進捗・ETA、入力割当・公開 |
+| [交流](docs/accounts.md) | いいね・声援・コメント、声援履歴、団体ページ・公開動画一覧・フォロー |
+| [LIVE](docs/cloud-live.md) | 多視点録画を到着順に学習し、Tokyo T4×1から8モデルを実CDN公開 |
 
-  ## 開発用のリポジトリは別に作ることをおすすめします
+LIVEの継続30秒遅延は未達。実カメラ入力、実スマートフォン性能、大規模視聴、実品質ラダーを使うABRの効果は未検証です。[実装と残る課題](docs/backend-status.md)
 
-  このリポジトリでは **GitHub Actions と GitHub Pages が使えません**。CI やデプロイ、Pages での公開をしたいときは、チームで開発用のリポジトリを別に作ってください。
+## はじめる
 
-  - 開発用のリポジトリは、チームのメンバーのアカウントや、チームで作った Organization に作ってください
-  - 開発はそちらで進めて、提出期限までに最終版のコードと資料をこのリポジトリに push してください
-  - 審査はこのリポジトリの内容で行います。開発用のリポジトリにしかないものは、審査の対象になりません
-  - デプロイした作品の URL があれば、この README に書いてください
+Go 1.27.3で合成資産のHTTP配信・ABRを試せます。
 
-  ## 秘密情報をコミットしない
+```bash
+git clone https://github.com/Hosi121/rangle.git
+cd rangle
+```
 
-  API キー・パスワード・サービスアカウントの鍵などは、**絶対にコミットしないでください**。公開リポジトリなので、push
-  した時点で誰でも見られます。開発用のリポジトリから持ってくるときも、履歴ごと push すると、過去のコミットに含まれる秘密情報も公開されます。
+```bash
+go run ./cmd/abr-sim
+go run ./cmd/rangle-dev
+```
 
-  - 秘密情報は `.env` や `.dev.vars` などに書き、コミットしない（`.gitignore` に入れてあります）
-  - 誤って push したら、すぐにキー（鍵）を無効にして作り直し、運営に連絡してください。履歴から消すだけでは不十分です
-  - GitHub の push protection が、よく知られた形式のキーの push を止めることがあります。止められたら、そのキーをコミットから外してください
+サーバー起動中、別ターミナルで取得します。終了はCtrl+C。
 
-  ## 提出
+```bash
+curl http://127.0.0.1:8080/manifests/demo/synthetic-v1.json
+curl -i -H 'Range: bytes=0-15' http://127.0.0.1:8080/assets/demo/synthetic-v1/low/segment-0.bin
+```
 
-  提出の方法と締切は、運営からの案内に従ってください。提出期限を過ぎると、このリポジトリは読み取り専用になり、push できなくなります。
+実映像の再生・性能検証とは別のデモです。画面は[Flutter Web](apps/web/README.md#開発とビルド)、コンテナは[Docker](docs/docker.md)、手元のsceneは[ローカル配信](docs/local-server.md)を参照。
 
-  ## ライセンス
+## 資料と開発
 
-  [MIT License](LICENSE) です。ほかのライセンスにしたいときは、LICENSE を書き換えてください。
+| 場所 | 内容 |
+| --- | --- |
+| `cmd/`・`internal/` | GoのAPI・配信・生成制御・ABR |
+| [apps/web/](apps/web/README.md) | Flutter UI・JS viewer |
+| `ml/` | 前処理・学習・packing |
+| [infra/gcp/](infra/gcp/README.md) | Terraform |
+| [共有fixture](testdata/contracts/v1/README.md) | Go/Python/JS/Dartのmedia契約、74件の合成入力 |
+| [docs/](docs/README.md) | 現行の構成・仕様・運用・実測。初期案はarchive |
+
+開発正本は[Hosi121/rangle](https://github.com/Hosi121/rangle)（origin）。作業PR→stg→mainの手順は[開発ルール](CONTRIBUTING.md)、最終提出先と制約は[提出案内](docs/submission.md)を参照。実データ・重み・認証情報はGitへ追加しません。
+
+## ライセンス
+
+自作コードは[MIT](LICENSE)。外部データ・コード・モデルには各利用条件が適用されます。[内蔵サンプルの出典](apps/web/assets/samples/ATTRIBUTION.md)と各実験資料を参照。
